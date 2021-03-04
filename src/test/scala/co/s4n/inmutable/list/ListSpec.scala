@@ -170,13 +170,13 @@ class ListSpec extends AnyFlatSpec with Matchers {
     "lista (1,2,3)" in {
     val list = List(1,2,3,4,5,6)
     val listExit = List(1,2,3)
-    List.takeWhileL(list)(x => x < 4) shouldBe(listExit)
+    List.takeWhileL(list)(_ < 4) shouldBe(listExit)
   }
   "La función filterL al enviarle la lista (1,10,4,8,3,7,2) y la función anónima (< 5)" should "debería devolver la " +
     "lista (1,4,3,2)" in {
     val list = List(1,10,4,8,3,7,2)
     val listExit = List(1,4,3,2)
-    List.filterL(list)(x => x < 5) shouldBe(listExit)
+    List.filterL(list)(_ < 5) shouldBe(listExit)
   }
   "La función unzipL al enviarle la lista ((true,5),(false,6),(false,7))" should "debería devolver las listas " +
     "(true,false,false) y (5,6,7) " in {

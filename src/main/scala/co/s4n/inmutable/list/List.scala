@@ -192,11 +192,12 @@ object List {
     case Const(h,t) => f(h,foldRight(t,z)(f))
   }
   /**Ejercicio 13. Se realiza una copia de la lista introducida */
-  /**Ejercicio 14.  */
+  /**Ejercicio 14. Devuelve la cantidad de elementos de la lista recibida */
   def lengthF[A](list:List[A]):Int = foldRight(list,0)((_,y) => 1 + y)
-  /**Ejercicio 15. */
+  /**Ejercicio 15. Devuelve un booleano true si todos los elementos de la lista recibida son true */
   def andF(list:List[Boolean]):Boolean = foldRight(list,true)(_&&_)
-  /**Ejercicio 16. */
+  /**Ejercicio 16. Devuelve una lista con los elementos de la lista recibida hasta el primer elemento que deje de
+   * cumplir con el predicado recibido */
   def takeWhile[A](list:List[A])(p:A=>Boolean):List[A] = {
     def takeWhilep[A](list:List[A],aux:List[A])(p:A=>Boolean):List[A] = list match {
       case Const(h,t) if p(h) => takeWhilep(t,addEnd(aux,h))(p)
@@ -204,9 +205,11 @@ object List {
     }
     takeWhilep(list,Nil)(p)
   }
-  /**Ejercicio 17.  */
+  /**Ejercicio 17. Devuelve una lista con todos los elementos de la lista recibida que cumplan con el predicado
+   * recibido */
   def filter[A](list:List[A])(p:A=>Boolean):List[A] =  foldRight(list,Nil:List[A])((x,y) => if (p(x)) Const(x,y) else y)
-  /**Ejercicio 18.  */
+  /**Ejercicio 18. Devuelve dos listas separando los elementos en las tuplas de la lista recibida, la primer lista con
+   * el primer elemento de cada tupla y la segunda con el segundos elemento de cada tupla */
   def unzipF[A,B](list:List[(A,B)]):(List[A],List[B]) =
     foldRight(list,(Nil:List[A],Nil:List[B]))((x,y) => (Const(x._1,y._1),Const(x._2,y._2)))
   /** FoldLeft */
@@ -215,29 +218,38 @@ object List {
     case Const(h,t) => foldLeft(t,f(z,h))(f)
     case Nil        => z
   }
-  /**Ejericio 19.  */
+  /**Ejericio 19. Devuelve la cantidad de elementos de la lista recibida */
   def lengthL[A](list:List[A]):Int =  foldLeft(list,0)((x,_) => x + 1)
-  /**Ejercicio 20.  */
+  /**Ejercicio 20. Devuelve un booleano true si todos los elementos de la lista recibida son true */
   def andL(list:List[Boolean]):Boolean =  foldLeft(list,true)(_&&_)
-  /**Ejercicio 21.  */
-  def takeWhileL[A](list:List[A])(p:A=>Boolean):List[A] =
-    foldLeft(list,Nil:List[A])((y,x) => if(p(x))  addEnd(y,x) else y)
-  /**Ejercicio 22.  */
+  /**Ejercicio 21. Devuelve una lista con los elementos de la lista recibida hasta el primer elemento que deje de
+   * cumplir con el predicado recibido */
+  def takeWhileL[A](list:List[A])(p:A=>Boolean):List[A] = {
+    def f(b:(Boolean,List[A]),a:A):(Boolean,List[A]) = b match {
+      case (true,list) => if (p(a)) (true,addEnd(list,a)) else (false,list)
+      case (false,list) => b
+    }
+    foldLeft(list,(true,Nil:List[A]))(f)._2
+  }
+  /**Ejercicio 22. Devuelve una lista con todos los elementos de la lista recibida que cumplan con el predicado
+   * recibido */
   def filterL[A](list:List[A])(p:A=>Boolean):List[A] =
     foldLeft(list,Nil:List[A])((y,x) => if(p(x)) addEnd(y,x) else y)
-  /**Ejercicio 23.  */
+  /**Ejercicio 23. Devuelve dos listas separando los elementos en las tuplas de la lista recibida, la primer lista con
+   * el primer elemento de cada tupla y la segunda con el segundos elemento de cada tupla */
   def unzipL[A,B](list:List[(A,B)]):(List[A],List[B]) =
     foldLeft(list,(Nil:List[A],Nil:List[B]))((y,x) => (addEnd(y._1,x._1),addEnd(y._2,x._2)))
   /**Map Generalizado */
-    def mapGen[A,B](list:List[A])(f:A=>B):List[B] = list match{
-      case Nil        => Nil
-      case Const(h,t) => Const(f(h),mapGen(t)(f))
-    }
+  def mapGen[A,B](list:List[A])(f:A=>B):List[B] = list match{
+    case Nil        => Nil
+    case Const(h,t) => Const(f(h),mapGen(t)(f))
+  }
   /** Sumar uno a cada elemento */
   def sumarUnoMap(list:List[Int]):List[Int] = mapGen(list)(_+1)
   /** Convertir de Int a String */
   def listInt2String(list:List[Int]):List[String] = mapGen(list)(_.toString)
   /** Map con foldRight */
   def map[A,B](list:List[A])(f:A=>B):List[B] = foldRight(list,Nil:List[B])((x,y)=> Const(f(x),y) )
+ /** DropWhile con foldRight */
 
 }
